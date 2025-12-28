@@ -1,0 +1,11 @@
+# Infinite Story Loop - Python Dependencies
+
+# No external dependencies required for core functionality
+# The game uses only Python standard library
+
+# Optional dependencies for development:
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Optional dependencies for enhanced functionality:
+# colorama>=0.4.6  # For colored terminal output (cross-platform)
