@@ -26,20 +26,32 @@ class TestGameLogger:
     """Tests for the GameLogger class."""
     
     def test_logger_creation(self):
-        """Test creating a logger."""
+        """Test creating a logger.
+
+        Verifies that a new GameLogger instance has empty entries
+        and default log level of INFO (20).
+        """
         logger = GameLogger()
         
         assert logger.entries == []
         assert logger.log_level == 20  # INFO
     
     def test_logger_with_console(self):
-        """Test creating a logger with console output."""
+        """Test creating a logger with console output.
+
+        Verifies that console_output flag is properly set when
+        creating a GameLogger with console output enabled.
+        """
         logger = GameLogger(console_output=True)
         
         assert logger.console_output is True
     
     def test_log_message(self):
-        """Test logging a message."""
+        """Test logging a message.
+
+        Verifies that a message is correctly logged with the specified
+        level and category, and stored in the logger's entries.
+        """
         logger = GameLogger()
         
         logger.log("Test message", "INFO", "TEST")
@@ -50,7 +62,11 @@ class TestGameLogger:
         assert logger.entries[0]["category"] == "TEST"
     
     def test_log_debug(self):
-        """Test logging debug message."""
+        """Test logging debug message.
+
+        Verifies that debug messages are logged when log level is set
+        to DEBUG, and the entry has correct level.
+        """
         logger = GameLogger(log_level="DEBUG")
         
         logger.debug("Debug message")
@@ -59,7 +75,11 @@ class TestGameLogger:
         assert logger.entries[0]["level"] == "DEBUG"
     
     def test_log_info(self):
-        """Test logging info message."""
+        """Test logging info message.
+
+        Verifies that info messages are logged correctly and have
+        the INFO level in the entry.
+        """
         logger = GameLogger()
         
         logger.info("Info message")
@@ -68,7 +88,11 @@ class TestGameLogger:
         assert logger.entries[0]["level"] == "INFO"
     
     def test_log_warning(self):
-        """Test logging warning message."""
+        """Test logging warning message.
+
+        Verifies that warning messages are logged correctly and have
+        the WARNING level in the entry.
+        """
         logger = GameLogger()
         
         logger.warning("Warning message")
@@ -77,7 +101,11 @@ class TestGameLogger:
         assert logger.entries[0]["level"] == "WARNING"
     
     def test_log_error(self):
-        """Test logging error message."""
+        """Test logging error message.
+
+        Verifies that error messages are logged correctly and have
+        the ERROR level in the entry.
+        """
         logger = GameLogger()
         
         logger.error("Error message")
@@ -86,7 +114,11 @@ class TestGameLogger:
         assert logger.entries[0]["level"] == "ERROR"
     
     def test_log_story(self):
-        """Test logging story event."""
+        """Test logging story event.
+
+        Verifies that story events are logged with STORY level
+        and NARRATIVE category.
+        """
         logger = GameLogger()
         
         logger.story("Player moved north")
@@ -96,7 +128,10 @@ class TestGameLogger:
         assert logger.entries[0]["category"] == "NARRATIVE"
     
     def test_log_paradox(self):
-        """Test logging paradox event."""
+        """Test logging paradox event.
+
+        Verifies that paradox events are logged with the PARADOX category.
+        """
         logger = GameLogger()
         
         logger.paradox("Loop detected")
@@ -105,7 +140,11 @@ class TestGameLogger:
         assert logger.entries[0]["category"] == "PARADOX"
     
     def test_log_level_filtering(self):
-        """Test that log level filters messages."""
+        """Test that log level filters messages.
+
+        Verifies that messages below the configured log level are
+        filtered out, while messages at or above the level are logged.
+        """
         logger = GameLogger(log_level="WARNING")
         
         logger.debug("Debug")  # Should be filtered
@@ -116,7 +155,11 @@ class TestGameLogger:
         assert len(logger.entries) == 2
     
     def test_get_entries_all(self):
-        """Test getting all log entries."""
+        """Test getting all log entries.
+
+        Verifies that get_entries returns all logged entries
+        when no filters are applied.
+        """
         logger = GameLogger()
         logger.info("Message 1")
         logger.info("Message 2")
@@ -127,7 +170,11 @@ class TestGameLogger:
         assert len(entries) == 3
     
     def test_get_entries_by_level(self):
-        """Test getting entries filtered by level."""
+        """Test getting entries filtered by level.
+
+        Verifies that get_entries correctly filters entries
+        by the specified log level.
+        """
         logger = GameLogger()
         logger.info("Info message")
         logger.warning("Warning message")
@@ -138,7 +185,11 @@ class TestGameLogger:
         assert len(entries) == 2
     
     def test_get_entries_by_category(self):
-        """Test getting entries filtered by category."""
+        """Test getting entries filtered by category.
+
+        Verifies that get_entries correctly filters entries
+        by the specified category.
+        """
         logger = GameLogger()
         logger.log("Message 1", "INFO", "CAT1")
         logger.log("Message 2", "INFO", "CAT2")
@@ -149,7 +200,11 @@ class TestGameLogger:
         assert len(entries) == 2
     
     def test_get_entries_with_limit(self):
-        """Test getting limited number of entries."""
+        """Test getting limited number of entries.
+
+        Verifies that get_entries respects the limit parameter
+        and returns the most recent entries.
+        """
         logger = GameLogger()
         for i in range(10):
             logger.info(f"Message {i}")
@@ -160,7 +215,10 @@ class TestGameLogger:
         assert entries[0]["message"] == "Message 5"  # Last 5
     
     def test_clear_entries(self):
-        """Test clearing log entries."""
+        """Test clearing log entries.
+
+        Verifies that the clear method removes all entries from the logger.
+        """
         logger = GameLogger()
         logger.info("Message 1")
         logger.info("Message 2")
@@ -170,7 +228,11 @@ class TestGameLogger:
         assert len(logger.entries) == 0
     
     def test_log_to_file(self):
-        """Test logging to a file."""
+        """Test logging to a file.
+
+        Verifies that the logger correctly writes log entries to a file
+        when a log_file path is provided.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             log_file = os.path.join(tmpdir, "test.log")
             logger = GameLogger(log_file=log_file)
@@ -187,7 +249,11 @@ class TestHistoryEntry:
     """Tests for the HistoryEntry class."""
     
     def test_entry_creation(self):
-        """Test creating a history entry."""
+        """Test creating a history entry.
+
+        Verifies that a HistoryEntry is created with the correct
+        node_id, action, and auto-generated timestamp.
+        """
         entry = HistoryEntry(
             node_id="node-123",
             action="go north",
@@ -198,7 +264,11 @@ class TestHistoryEntry:
         assert entry.timestamp is not None
     
     def test_entry_with_metadata(self):
-        """Test creating an entry with metadata."""
+        """Test creating an entry with metadata.
+
+        Verifies that a HistoryEntry correctly stores additional
+        metadata provided during creation.
+        """
         entry = HistoryEntry(
             node_id="node-123",
             action="take sword",
@@ -208,7 +278,11 @@ class TestHistoryEntry:
         assert entry.metadata["item"] == "sword"
     
     def test_entry_to_dict(self):
-        """Test serializing entry to dictionary."""
+        """Test serializing entry to dictionary.
+
+        Verifies that the to_dict method correctly converts
+        the HistoryEntry to a dictionary representation.
+        """
         entry = HistoryEntry(
             node_id="node-123",
             action="look",
@@ -222,7 +296,11 @@ class TestHistoryEntry:
         assert data["state_hash"] == "abc123"
     
     def test_entry_from_dict(self):
-        """Test deserializing entry from dictionary."""
+        """Test deserializing entry from dictionary.
+
+        Verifies that the from_dict class method correctly creates
+        a HistoryEntry from a dictionary representation.
+        """
         data = {
             "node_id": "node-456",
             "action": "talk",
@@ -242,14 +320,22 @@ class TestHistoryTracker:
     """Tests for the HistoryTracker class."""
     
     def test_tracker_creation(self):
-        """Test creating a history tracker."""
+        """Test creating a history tracker.
+
+        Verifies that a new HistoryTracker has empty entries
+        and state_hashes collections.
+        """
         tracker = HistoryTracker()
         
         assert len(tracker.entries) == 0
         assert len(tracker.state_hashes) == 0
     
     def test_add_entry(self):
-        """Test adding an entry to the tracker."""
+        """Test adding an entry to the tracker.
+
+        Verifies that add_entry creates a new entry with correct data
+        and generates a state hash.
+        """
         tracker = HistoryTracker()
         
         entry = tracker.add_entry(
@@ -263,7 +349,11 @@ class TestHistoryTracker:
         assert entry.state_hash != ""
     
     def test_detect_loop_found(self):
-        """Test detecting a state loop."""
+        """Test detecting a state loop.
+
+        Verifies that detect_loop returns the index of the first entry
+        with a matching state hash when a loop is detected.
+        """
         tracker = HistoryTracker()
         
         state1 = {"location": "forest", "items": []}
@@ -278,7 +368,11 @@ class TestHistoryTracker:
         assert loop_index == 0
     
     def test_detect_loop_not_found(self):
-        """Test when no loop is detected."""
+        """Test when no loop is detected.
+
+        Verifies that detect_loop returns None when the given state
+        does not match any previously recorded state.
+        """
         tracker = HistoryTracker()
         
         state1 = {"location": "forest"}
@@ -293,7 +387,11 @@ class TestHistoryTracker:
         assert loop_index is None
     
     def test_detect_node_loop(self):
-        """Test detecting node visit loops."""
+        """Test detecting node visit loops.
+
+        Verifies that detect_node_loop identifies repeating patterns
+        of node visits within the specified window size.
+        """
         tracker = HistoryTracker()
         
         # Create a repeating pattern of node visits
@@ -307,7 +405,11 @@ class TestHistoryTracker:
         assert loop is not None or len(tracker.entries) >= 6
     
     def test_detect_contradiction(self):
-        """Test detecting contradicting actions."""
+        """Test detecting contradicting actions.
+
+        Verifies that detect_contradiction identifies when a new action
+        contradicts a previous action on the same target.
+        """
         tracker = HistoryTracker()
         
         tracker.add_entry("n1", "take sword", {}, {"target": "sword"})
@@ -318,7 +420,11 @@ class TestHistoryTracker:
         assert contradiction["type"] == "contradiction"
     
     def test_detect_contradiction_not_found(self):
-        """Test when no contradiction is detected."""
+        """Test when no contradiction is detected.
+
+        Verifies that detect_contradiction returns None when
+        the action does not contradict any previous actions.
+        """
         tracker = HistoryTracker()
         
         tracker.add_entry("n1", "take sword", {}, {"target": "sword"})
@@ -328,7 +434,11 @@ class TestHistoryTracker:
         assert contradiction is None
     
     def test_get_recent_actions(self):
-        """Test getting recent actions."""
+        """Test getting recent actions.
+
+        Verifies that get_recent_actions returns the specified number
+        of most recent actions in order.
+        """
         tracker = HistoryTracker()
         
         tracker.add_entry("n1", "go north", {})
@@ -341,7 +451,11 @@ class TestHistoryTracker:
         assert recent == ["look", "take key"]
     
     def test_get_visited_nodes(self):
-        """Test getting set of visited nodes."""
+        """Test getting set of visited nodes.
+
+        Verifies that get_visited_nodes returns a set of unique
+        node IDs that have been visited.
+        """
         tracker = HistoryTracker()
         
         tracker.add_entry("n1", "action1", {})
@@ -353,7 +467,11 @@ class TestHistoryTracker:
         assert visited == {"n1", "n2"}
     
     def test_get_node_visit_count(self):
-        """Test counting node visits."""
+        """Test counting node visits.
+
+        Verifies that get_node_visit_count returns the correct
+        number of times a specific node has been visited.
+        """
         tracker = HistoryTracker()
         
         tracker.add_entry("n1", "a1", {})
@@ -366,7 +484,11 @@ class TestHistoryTracker:
         assert count == 3
     
     def test_tracker_to_dict(self):
-        """Test serializing tracker to dictionary."""
+        """Test serializing tracker to dictionary.
+
+        Verifies that the to_dict method correctly converts
+        the HistoryTracker to a dictionary representation.
+        """
         tracker = HistoryTracker()
         tracker.add_entry("n1", "action", {"x": 1})
         
@@ -377,7 +499,11 @@ class TestHistoryTracker:
         assert len(data["entries"]) == 1
     
     def test_tracker_from_dict(self):
-        """Test deserializing tracker from dictionary."""
+        """Test deserializing tracker from dictionary.
+
+        Verifies that the from_dict class method correctly creates
+        a HistoryTracker from a dictionary representation.
+        """
         data = {
             "entries": [
                 {"node_id": "n1", "action": "go", "timestamp": "", "state_hash": "abc", "metadata": {}}
@@ -391,7 +517,11 @@ class TestHistoryTracker:
         assert "abc" in tracker.state_hashes
     
     def test_clear_tracker(self):
-        """Test clearing the tracker."""
+        """Test clearing the tracker.
+
+        Verifies that the clear method removes all entries
+        and state hashes from the tracker.
+        """
         tracker = HistoryTracker()
         tracker.add_entry("n1", "action", {})
         
@@ -405,7 +535,11 @@ class TestStateManager:
     """Tests for the StateManager class."""
     
     def test_manager_creation(self):
-        """Test creating a state manager."""
+        """Test creating a state manager.
+
+        Verifies that a new StateManager is created with default
+        auto_save_enabled and auto_save_interval values.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             
@@ -413,7 +547,11 @@ class TestStateManager:
             assert manager.auto_save_interval == 10
     
     def test_save_game(self):
-        """Test saving a game state."""
+        """Test saving a game state.
+
+        Verifies that save creates a JSON file with the game state
+        at the specified save name.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             game_state = {"location": "forest", "items": ["sword"]}
@@ -424,7 +562,11 @@ class TestStateManager:
             assert path.endswith(".json")
     
     def test_save_game_auto_filename(self):
-        """Test saving with auto-generated filename."""
+        """Test saving with auto-generated filename.
+
+        Verifies that save generates a filename with 'save_' prefix
+        when no save name is provided.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             game_state = {"location": "cave"}
@@ -435,7 +577,11 @@ class TestStateManager:
             assert "save_" in path
     
     def test_load_game(self):
-        """Test loading a saved game."""
+        """Test loading a saved game.
+
+        Verifies that load correctly retrieves the game state
+        from a previously saved file.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             original_state = {"location": "castle", "gold": 100}
@@ -448,7 +594,11 @@ class TestStateManager:
             assert loaded_state["gold"] == 100
     
     def test_load_game_not_found(self):
-        """Test loading a non-existent save."""
+        """Test loading a non-existent save.
+
+        Verifies that load returns None when the specified
+        save file does not exist.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             
@@ -457,7 +607,11 @@ class TestStateManager:
             assert loaded_state is None
     
     def test_list_saves(self):
-        """Test listing available saves."""
+        """Test listing available saves.
+
+        Verifies that list_saves returns all save files
+        in the save directory.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             
@@ -469,7 +623,11 @@ class TestStateManager:
             assert len(saves) == 2
     
     def test_delete_save(self):
-        """Test deleting a save file."""
+        """Test deleting a save file.
+
+        Verifies that delete_save removes the specified save file
+        and returns True on success.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             manager.save({"x": 1}, "to_delete")
@@ -480,7 +638,11 @@ class TestStateManager:
             assert manager.load("to_delete") is None
     
     def test_delete_save_not_found(self):
-        """Test deleting a non-existent save."""
+        """Test deleting a non-existent save.
+
+        Verifies that delete_save returns False when attempting
+        to delete a save file that does not exist.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(save_directory=tmpdir)
             
@@ -489,7 +651,11 @@ class TestStateManager:
             assert result is False
     
     def test_auto_save(self):
-        """Test auto-save functionality."""
+        """Test auto-save functionality.
+
+        Verifies that auto_save triggers a save after the configured
+        number of actions (auto_save_interval) have occurred.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(
                 save_directory=tmpdir,
@@ -504,7 +670,11 @@ class TestStateManager:
             assert result2 is not None
     
     def test_auto_save_disabled(self):
-        """Test that auto-save can be disabled."""
+        """Test that auto-save can be disabled.
+
+        Verifies that auto_save never triggers a save when
+        auto_save_enabled is set to False.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             manager = StateManager(
                 save_directory=tmpdir,
@@ -521,7 +691,10 @@ class TestUtilityFunctions:
     """Tests for utility functions."""
     
     def test_format_story_text_simple(self):
-        """Test formatting simple text."""
+        """Test formatting simple text.
+
+        Verifies that format_story_text preserves simple text content.
+        """
         text = "This is a test."
         
         formatted = format_story_text(text)
@@ -529,7 +702,11 @@ class TestUtilityFunctions:
         assert "This is a test." in formatted
     
     def test_format_story_text_wrapping(self):
-        """Test that long text is wrapped."""
+        """Test that long text is wrapped.
+
+        Verifies that format_story_text wraps long lines to the
+        specified width limit.
+        """
         text = "This is a very long line of text that should be wrapped to a reasonable width for console display."
         
         formatted = format_story_text(text, width=40)
@@ -539,7 +716,11 @@ class TestUtilityFunctions:
             assert len(line) <= 40
     
     def test_format_story_text_paragraphs(self):
-        """Test that paragraphs are preserved."""
+        """Test that paragraphs are preserved.
+
+        Verifies that format_story_text maintains paragraph
+        breaks (double newlines) in the output.
+        """
         text = "First paragraph.\n\nSecond paragraph."
         
         formatted = format_story_text(text)
@@ -547,20 +728,32 @@ class TestUtilityFunctions:
         assert "\n\n" in formatted
     
     def test_create_separator(self):
-        """Test creating a separator line."""
+        """Test creating a separator line.
+
+        Verifies that create_separator generates a line of the
+        specified character repeated to the specified length.
+        """
         separator = create_separator("=", 10)
         
         assert separator == "=========="
     
     def test_create_separator_default(self):
-        """Test creating separator with defaults."""
+        """Test creating separator with defaults.
+
+        Verifies that create_separator uses default character and
+        length when no parameters are provided.
+        """
         separator = create_separator()
         
         assert len(separator) == 70
         assert separator[0] == "═"
     
     def test_create_header(self):
-        """Test creating a header."""
+        """Test creating a header.
+
+        Verifies that create_header generates a box-formatted header
+        containing the title text with border characters.
+        """
         header = create_header("Test Title", width=30)
         
         assert "Test Title" in header
@@ -568,14 +761,22 @@ class TestUtilityFunctions:
         assert "╚" in header
     
     def test_get_random_surreal_event(self):
-        """Test getting a random surreal event."""
+        """Test getting a random surreal event.
+
+        Verifies that get_random_surreal_event returns a non-empty
+        string describing a surreal event.
+        """
         event = get_random_surreal_event()
         
         assert isinstance(event, str)
         assert len(event) > 0
     
     def test_get_random_surreal_event_variety(self):
-        """Test that surreal events have variety."""
+        """Test that surreal events have variety.
+
+        Verifies that get_random_surreal_event returns different
+        events across multiple calls, not always the same one.
+        """
         events = set()
         for _ in range(50):
             events.add(get_random_surreal_event())
@@ -584,20 +785,32 @@ class TestUtilityFunctions:
         assert len(events) > 1
     
     def test_parse_freeform_input_simple(self):
-        """Test parsing simple freeform input."""
+        """Test parsing simple freeform input.
+
+        Verifies that parse_freeform_input extracts a verb or
+        returns a confidence score for simple natural language input.
+        """
         result = parse_freeform_input("I want to go north")
         
         assert result["verb"] is not None or result["confidence"] > 0
     
     def test_parse_freeform_input_empty(self):
-        """Test parsing empty input."""
+        """Test parsing empty input.
+
+        Verifies that parse_freeform_input returns None verb and
+        zero confidence for empty string input.
+        """
         result = parse_freeform_input("")
         
         assert result["verb"] is None
         assert result["confidence"] == 0.0
     
     def test_parse_freeform_input_with_target(self):
-        """Test parsing freeform input with target."""
+        """Test parsing freeform input with target.
+
+        Verifies that parse_freeform_input correctly processes
+        input containing an action verb and target object.
+        """
         result = parse_freeform_input("take the sword")
         
         assert result is not None

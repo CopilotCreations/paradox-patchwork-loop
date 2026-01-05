@@ -13,20 +13,31 @@ class TestConsoleInterface:
     """Tests for the ConsoleInterface class."""
     
     def test_interface_creation(self):
-        """Test creating a console interface."""
+        """Test creating a console interface.
+
+        Verifies that a ConsoleInterface is created with default width
+        and separator character.
+        """
         interface = ConsoleInterface()
         
         assert interface.width == 70
         assert interface.separator_char == "═"
     
     def test_interface_custom_width(self):
-        """Test creating interface with custom width."""
+        """Test creating interface with custom width.
+
+        Verifies that the interface width can be customized during creation.
+        """
         interface = ConsoleInterface(width=80)
         
         assert interface.width == 80
     
     def test_display_separator(self, capsys):
-        """Test displaying a separator."""
+        """Test displaying a separator.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface(width=10)
         
         interface.display_separator("=")
@@ -35,7 +46,11 @@ class TestConsoleInterface:
         assert "==========" in captured.out
     
     def test_display_text(self, capsys):
-        """Test displaying text."""
+        """Test displaying text.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_text("Hello, World!")
@@ -44,7 +59,11 @@ class TestConsoleInterface:
         assert "Hello, World!" in captured.out
     
     def test_display_text_with_prefix(self, capsys):
-        """Test displaying text with prefix."""
+        """Test displaying text with prefix.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_text("Test line", prefix=">> ")
@@ -53,7 +72,11 @@ class TestConsoleInterface:
         assert ">> Test line" in captured.out
     
     def test_display_choices(self, capsys):
-        """Test displaying choices."""
+        """Test displaying choices.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_choices(["Go north", "Go south", "Look around"])
@@ -64,7 +87,11 @@ class TestConsoleInterface:
         assert "[3] Look around" in captured.out
     
     def test_display_choices_empty(self, capsys):
-        """Test displaying empty choices."""
+        """Test displaying empty choices.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_choices([])
@@ -73,7 +100,11 @@ class TestConsoleInterface:
         assert captured.out == ""
     
     def test_display_paradox_warning(self, capsys):
-        """Test displaying paradox warning."""
+        """Test displaying paradox warning.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_paradox_warning("TEMPORAL_LOOP", 7)
@@ -83,7 +114,11 @@ class TestConsoleInterface:
         assert "TEMPORAL_LOOP" in captured.out
     
     def test_display_error(self, capsys):
-        """Test displaying an error."""
+        """Test displaying an error.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_error("Something went wrong")
@@ -93,7 +128,11 @@ class TestConsoleInterface:
         assert "⚠" in captured.out
     
     def test_display_save_message(self, capsys):
-        """Test displaying save message."""
+        """Test displaying save message.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_save_message("/path/to/save.json")
@@ -103,7 +142,11 @@ class TestConsoleInterface:
         assert "/path/to/save.json" in captured.out
     
     def test_display_load_message_success(self, capsys):
-        """Test displaying load success message."""
+        """Test displaying load success message.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_load_message(True)
@@ -112,7 +155,11 @@ class TestConsoleInterface:
         assert "successfully" in captured.out.lower()
     
     def test_display_load_message_failure(self, capsys):
-        """Test displaying load failure message."""
+        """Test displaying load failure message.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         interface = ConsoleInterface()
         
         interface.display_load_message(False)
@@ -121,7 +168,10 @@ class TestConsoleInterface:
         assert "failed" in captured.out.lower()
     
     def test_get_input(self):
-        """Test getting input from user."""
+        """Test getting input from user.
+
+        Verifies that user input is correctly returned.
+        """
         interface = ConsoleInterface()
         
         with patch('builtins.input', return_value="test input"):
@@ -130,7 +180,10 @@ class TestConsoleInterface:
         assert result == "test input"
     
     def test_get_input_strips_whitespace(self):
-        """Test that input is stripped."""
+        """Test that input is stripped.
+
+        Verifies that leading and trailing whitespace is removed from input.
+        """
         interface = ConsoleInterface()
         
         with patch('builtins.input', return_value="  test  "):
@@ -139,7 +192,10 @@ class TestConsoleInterface:
         assert result == "test"
     
     def test_get_input_eof(self):
-        """Test handling EOF."""
+        """Test handling EOF.
+
+        Verifies that EOFError is handled gracefully by returning 'quit'.
+        """
         interface = ConsoleInterface()
         
         with patch('builtins.input', side_effect=EOFError):
@@ -148,7 +204,10 @@ class TestConsoleInterface:
         assert result == "quit"
     
     def test_get_input_keyboard_interrupt(self):
-        """Test handling keyboard interrupt."""
+        """Test handling keyboard interrupt.
+
+        Verifies that KeyboardInterrupt is handled gracefully by returning 'quit'.
+        """
         interface = ConsoleInterface()
         
         with patch('builtins.input', side_effect=KeyboardInterrupt):
@@ -161,7 +220,10 @@ class TestGameController:
     """Tests for the GameController class."""
     
     def test_controller_creation(self):
-        """Test creating a game controller."""
+        """Test creating a game controller.
+
+        Verifies that a GameController is created with all required components.
+        """
         controller = GameController()
         
         assert controller.game is not None
@@ -170,7 +232,10 @@ class TestGameController:
         assert controller.running is False
     
     def test_handle_response_story(self):
-        """Test handling story response."""
+        """Test handling story response.
+
+        Verifies that story-type responses are processed without errors.
+        """
         controller = GameController()
         
         response = {
@@ -183,7 +248,10 @@ class TestGameController:
         controller._handle_response(response)
     
     def test_handle_response_paradox(self):
-        """Test handling paradox response."""
+        """Test handling paradox response.
+
+        Verifies that paradox-type responses are processed without errors.
+        """
         controller = GameController()
         
         response = {
@@ -198,7 +266,10 @@ class TestGameController:
         controller._handle_response(response)
     
     def test_handle_response_system(self):
-        """Test handling system response."""
+        """Test handling system response.
+
+        Verifies that system-type responses are processed without errors.
+        """
         controller = GameController()
         
         response = {
@@ -211,7 +282,10 @@ class TestGameController:
         controller._handle_response(response)
     
     def test_handle_response_quit(self):
-        """Test handling quit response."""
+        """Test handling quit response.
+
+        Verifies that quit-type responses stop the game controller.
+        """
         controller = GameController()
         controller.running = True
         
@@ -226,7 +300,11 @@ class TestGameController:
         assert controller.running is False
     
     def test_show_current_scene(self, capsys):
-        """Test showing current scene."""
+        """Test showing current scene.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         controller = GameController()
         
         controller._show_current_scene()
@@ -235,7 +313,11 @@ class TestGameController:
         assert len(captured.out) > 0
     
     def test_quit_game(self, capsys):
-        """Test quitting the game."""
+        """Test quitting the game.
+
+        Args:
+            capsys: Pytest fixture to capture stdout/stderr.
+        """
         controller = GameController()
         controller.running = True
         
@@ -250,7 +332,10 @@ class TestMainFunction:
     """Tests for the main function."""
     
     def test_main_returns_int(self):
-        """Test that main returns an integer."""
+        """Test that main returns an integer.
+
+        Verifies that the main function returns an integer exit code.
+        """
         from src.main import main
         
         # Mock the controller to quit immediately
@@ -260,7 +345,10 @@ class TestMainFunction:
         assert isinstance(result, int)
     
     def test_main_handles_exception(self):
-        """Test that main handles exceptions gracefully."""
+        """Test that main handles exceptions gracefully.
+
+        Verifies that exceptions during initialization return exit code 1.
+        """
         from src.main import main
         
         with patch.object(GameController, '__init__', side_effect=Exception("Init failed")):

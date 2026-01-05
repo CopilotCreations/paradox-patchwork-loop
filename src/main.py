@@ -44,11 +44,17 @@ class ConsoleInterface:
         self.separator_char = "═"
     
     def clear_screen(self) -> None:
-        """Clear the console screen."""
+        """Clear the console screen.
+        
+        Uses 'cls' on Windows and 'clear' on Unix-like systems.
+        """
         os.system('cls' if os.name == 'nt' else 'clear')
     
     def display_title(self) -> None:
-        """Display the game title screen."""
+        """Display the game title screen.
+        
+        Renders the ASCII art title banner for the Infinite Story Loop game.
+        """
         title = r"""
     ╔═══════════════════════════════════════════════════════════════════════╗
     ║                                                                       ║
@@ -81,7 +87,11 @@ class ConsoleInterface:
         print(title)
     
     def display_separator(self, char: Optional[str] = None) -> None:
-        """Display a separator line."""
+        """Display a separator line.
+        
+        Args:
+            char: Character to use for the separator. Defaults to separator_char.
+        """
         char = char or self.separator_char
         print(create_separator(char, self.width))
     
@@ -152,15 +162,27 @@ class ConsoleInterface:
             return "quit"
     
     def display_error(self, message: str) -> None:
-        """Display an error message."""
+        """Display an error message.
+        
+        Args:
+            message: The error message to display.
+        """
         print(f"\n⚠ {message}\n")
     
     def display_save_message(self, path: str) -> None:
-        """Display save confirmation."""
+        """Display save confirmation.
+        
+        Args:
+            path: The file path where the game was saved.
+        """
         print(f"\n✓ Game saved to: {path}\n")
     
     def display_load_message(self, success: bool) -> None:
-        """Display load result."""
+        """Display load result.
+        
+        Args:
+            success: Whether the load operation was successful.
+        """
         if success:
             print("\n✓ Game loaded successfully!\n")
         else:
@@ -183,7 +205,10 @@ class GameController:
     """
     
     def __init__(self):
-        """Initialize the game controller."""
+        """Initialize the game controller.
+        
+        Sets up the logger, game engine, console interface, and state manager.
+        """
         self.logger = GameLogger(console_output=False)
         self.game = InfiniteStoryLoop(logger=self.logger)
         self.interface = ConsoleInterface()
@@ -191,7 +216,11 @@ class GameController:
         self.running = False
     
     def start(self) -> None:
-        """Start the game."""
+        """Start the game.
+        
+        Initializes the game state, displays the title screen, and begins
+        the main game loop.
+        """
         self.running = True
         self.interface.clear_screen()
         self.interface.display_title()
@@ -204,7 +233,11 @@ class GameController:
         self._game_loop()
     
     def _game_loop(self) -> None:
-        """Main game loop."""
+        """Main game loop.
+        
+        Continuously processes player input and handles responses until
+        the game is no longer running.
+        """
         while self.running:
             # Get player input
             user_input = self.interface.get_input()
@@ -258,7 +291,10 @@ class GameController:
         self.state_manager.auto_save(self.game.to_dict())
     
     def _show_current_scene(self) -> None:
-        """Display the current scene."""
+        """Display the current scene.
+        
+        Shows the current story text and available choices to the player.
+        """
         self.interface.display_separator()
         self.interface.display_text(self.game.get_current_text())
         
@@ -267,7 +303,11 @@ class GameController:
             self.interface.display_choices(choices)
     
     def _save_game(self) -> None:
-        """Save the current game state."""
+        """Save the current game state.
+        
+        Saves the game to a manual save file and displays a confirmation
+        message. Shows an error message if the save fails.
+        """
         try:
             path = self.state_manager.save(
                 self.game.to_dict(),
@@ -278,7 +318,11 @@ class GameController:
             self.interface.display_error(f"Failed to save: {e}")
     
     def _load_game(self) -> None:
-        """Load a saved game state."""
+        """Load a saved game state.
+        
+        Displays available save files and prompts the player to select one.
+        Restores the game state from the selected save file.
+        """
         saves = self.state_manager.list_saves()
         
         if not saves:

@@ -62,12 +62,22 @@ class GameLogger:
             self._setup_file_logging()
     
     def _setup_file_logging(self) -> None:
-        """Set up file logging."""
+        """Set up file logging.
+        
+        Creates the parent directory for the log file if it doesn't exist.
+        """
         log_path = Path(self.log_file)
         log_path.parent.mkdir(parents=True, exist_ok=True)
     
     def _format_entry(self, entry: dict) -> str:
-        """Format a log entry as a string."""
+        """Format a log entry as a string.
+        
+        Args:
+            entry: Dictionary containing timestamp, level, category, and message.
+            
+        Returns:
+            Formatted log entry string.
+        """
         timestamp = entry["timestamp"]
         level = entry["level"]
         category = entry.get("category", "GENERAL")
@@ -111,27 +121,55 @@ class GameLogger:
                 f.write(formatted + "\n")
     
     def debug(self, message: str, category: str = "DEBUG") -> None:
-        """Log a debug message."""
+        """Log a debug message.
+        
+        Args:
+            message: The debug message to log.
+            category: Category for the log entry.
+        """
         self.log(message, "DEBUG", category)
     
     def info(self, message: str, category: str = "GENERAL") -> None:
-        """Log an info message."""
+        """Log an info message.
+        
+        Args:
+            message: The info message to log.
+            category: Category for the log entry.
+        """
         self.log(message, "INFO", category)
     
     def warning(self, message: str, category: str = "GENERAL") -> None:
-        """Log a warning message."""
+        """Log a warning message.
+        
+        Args:
+            message: The warning message to log.
+            category: Category for the log entry.
+        """
         self.log(message, "WARNING", category)
     
     def error(self, message: str, category: str = "ERROR") -> None:
-        """Log an error message."""
+        """Log an error message.
+        
+        Args:
+            message: The error message to log.
+            category: Category for the log entry.
+        """
         self.log(message, "ERROR", category)
     
     def story(self, message: str) -> None:
-        """Log a story event."""
+        """Log a story event.
+        
+        Args:
+            message: The story event message to log.
+        """
         self.log(message, "STORY", "NARRATIVE")
     
     def paradox(self, message: str) -> None:
-        """Log a paradox event."""
+        """Log a paradox event.
+        
+        Args:
+            message: The paradox event message to log.
+        """
         self.log(message, "WARNING", "PARADOX")
     
     def get_entries(
@@ -165,7 +203,10 @@ class GameLogger:
         return result
     
     def clear(self) -> None:
-        """Clear all log entries."""
+        """Clear all log entries.
+        
+        Removes all stored log entries from memory.
+        """
         self.entries = []
 
 
@@ -189,7 +230,11 @@ class HistoryEntry:
     metadata: dict = field(default_factory=dict)
     
     def to_dict(self) -> dict:
-        """Convert to dictionary."""
+        """Convert to dictionary.
+        
+        Returns:
+            Dictionary representation of the history entry.
+        """
         return {
             "node_id": self.node_id,
             "action": self.action,
@@ -200,7 +245,14 @@ class HistoryEntry:
     
     @classmethod
     def from_dict(cls, data: dict) -> 'HistoryEntry':
-        """Create from dictionary."""
+        """Create from dictionary.
+        
+        Args:
+            data: Dictionary containing history entry data.
+            
+        Returns:
+            HistoryEntry instance created from the dictionary.
+        """
         return cls(
             node_id=data.get("node_id", ""),
             action=data.get("action", ""),
@@ -232,7 +284,11 @@ class HistoryTracker:
         self._setup_default_rules()
     
     def _setup_default_rules(self) -> None:
-        """Set up default contradiction detection rules."""
+        """Set up default contradiction detection rules.
+        
+        Initializes the contradiction_rules list with predefined rules
+        that define action pairs which contradict each other.
+        """
         # These rules define action pairs that contradict each other
         self.contradiction_rules = [
             {"action1": "take", "action2": "drop", "same_target": True},
@@ -404,15 +460,30 @@ class HistoryTracker:
         return [e.action for e in self.entries[-count:]]
     
     def get_visited_nodes(self) -> set[str]:
-        """Get set of all visited node IDs."""
+        """Get set of all visited node IDs.
+        
+        Returns:
+            Set of node ID strings that have been visited.
+        """
         return {e.node_id for e in self.entries}
     
     def get_node_visit_count(self, node_id: str) -> int:
-        """Get number of times a node was visited."""
+        """Get number of times a node was visited.
+        
+        Args:
+            node_id: The ID of the node to count visits for.
+            
+        Returns:
+            Number of times the node was visited.
+        """
         return sum(1 for e in self.entries if e.node_id == node_id)
     
     def to_dict(self) -> dict:
-        """Convert to dictionary for serialization."""
+        """Convert to dictionary for serialization.
+        
+        Returns:
+            Dictionary representation of the history tracker.
+        """
         return {
             "entries": [e.to_dict() for e in self.entries],
             "state_hashes": list(self.state_hashes),
@@ -420,7 +491,14 @@ class HistoryTracker:
     
     @classmethod
     def from_dict(cls, data: dict) -> 'HistoryTracker':
-        """Create from dictionary."""
+        """Create from dictionary.
+        
+        Args:
+            data: Dictionary containing history tracker data.
+            
+        Returns:
+            HistoryTracker instance created from the dictionary.
+        """
         tracker = cls()
         tracker.entries = [
             HistoryEntry.from_dict(e) for e in data.get("entries", [])
@@ -429,7 +507,10 @@ class HistoryTracker:
         return tracker
     
     def clear(self) -> None:
-        """Clear all history."""
+        """Clear all history.
+        
+        Removes all entries and state hashes from the tracker.
+        """
         self.entries = []
         self.state_hashes = set()
 
@@ -467,7 +548,10 @@ class StateManager:
         self.action_count = 0
     
     def _ensure_save_directory(self) -> None:
-        """Ensure the save directory exists."""
+        """Ensure the save directory exists.
+        
+        Creates the save directory and any parent directories if they don't exist.
+        """
         self.save_directory.mkdir(parents=True, exist_ok=True)
     
     def save(

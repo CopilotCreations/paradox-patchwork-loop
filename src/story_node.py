@@ -45,13 +45,24 @@ class Choice:
     consequences: dict = field(default_factory=dict)
     
     def is_available(self, player: 'Player') -> bool:
-        """Check if this choice is available to the player."""
+        """Check if this choice is available to the player.
+
+        Args:
+            player: The player to check availability for.
+
+        Returns:
+            True if the choice is available, False otherwise.
+        """
         if self.condition is None:
             return True
         return self.condition(player)
     
     def to_dict(self) -> dict:
-        """Convert choice to dictionary for serialization."""
+        """Convert choice to dictionary for serialization.
+
+        Returns:
+            Dictionary representation of the choice.
+        """
         return {
             "text": self.text,
             "target_node_id": self.target_node_id,
@@ -61,7 +72,14 @@ class Choice:
     
     @classmethod
     def from_dict(cls, data: dict) -> 'Choice':
-        """Create a Choice from a dictionary."""
+        """Create a Choice from a dictionary.
+
+        Args:
+            data: Dictionary containing choice data.
+
+        Returns:
+            A new Choice instance.
+        """
         return cls(
             text=data.get("text", ""),
             target_node_id=data.get("target_node_id"),
@@ -203,11 +221,22 @@ class StoryNode:
         return new_node
     
     def add_tag(self, tag: str) -> None:
-        """Add a tag to this node."""
+        """Add a tag to this node.
+
+        Args:
+            tag: The tag to add (will be lowercased).
+        """
         self.tags.add(tag.lower())
     
     def has_tag(self, tag: str) -> bool:
-        """Check if this node has a specific tag."""
+        """Check if this node has a specific tag.
+
+        Args:
+            tag: The tag to check for.
+
+        Returns:
+            True if the node has the tag, False otherwise.
+        """
         return tag.lower() in self.tags
     
     def to_dict(self) -> dict:
@@ -262,11 +291,19 @@ class StoryNode:
         return node
     
     def __str__(self) -> str:
-        """Return a string representation of the node."""
+        """Return a string representation of the node.
+
+        Returns:
+            A human-readable string describing the node.
+        """
         return f"StoryNode({self.id[:8]}..., location={self.location}, type={self.node_type.name})"
     
     def __repr__(self) -> str:
-        """Return a detailed string representation."""
+        """Return a detailed string representation.
+
+        Returns:
+            A detailed string suitable for debugging.
+        """
         return (
             f"StoryNode(id={self.id!r}, location={self.location!r}, "
             f"type={self.node_type.name}, choices={len(self.choices)}, "
@@ -288,7 +325,10 @@ class StoryGraph:
     """
     
     def __init__(self):
-        """Initialize an empty story graph."""
+        """Initialize an empty story graph.
+
+        Creates a new StoryGraph with no nodes and no root.
+        """
         self.nodes: dict[str, StoryNode] = {}
         self.root_id: Optional[str] = None
     
@@ -429,7 +469,11 @@ class StoryGraph:
         return cycles
     
     def to_dict(self) -> dict:
-        """Convert the graph to a dictionary for serialization."""
+        """Convert the graph to a dictionary for serialization.
+
+        Returns:
+            Dictionary representation of the graph.
+        """
         return {
             "nodes": {nid: node.to_dict() for nid, node in self.nodes.items()},
             "root_id": self.root_id,
@@ -437,7 +481,14 @@ class StoryGraph:
     
     @classmethod
     def from_dict(cls, data: dict) -> 'StoryGraph':
-        """Create a StoryGraph from a dictionary."""
+        """Create a StoryGraph from a dictionary.
+
+        Args:
+            data: Dictionary containing graph data.
+
+        Returns:
+            A new StoryGraph instance.
+        """
         graph = cls()
         for node_data in data.get("nodes", {}).values():
             graph.add_node(StoryNode.from_dict(node_data))
@@ -445,9 +496,20 @@ class StoryGraph:
         return graph
     
     def __len__(self) -> int:
-        """Return the number of nodes in the graph."""
+        """Return the number of nodes in the graph.
+
+        Returns:
+            The number of nodes in the graph.
+        """
         return len(self.nodes)
     
     def __contains__(self, node_id: str) -> bool:
-        """Check if a node ID is in the graph."""
+        """Check if a node ID is in the graph.
+
+        Args:
+            node_id: The ID of the node to check.
+
+        Returns:
+            True if the node is in the graph, False otherwise.
+        """
         return node_id in self.nodes

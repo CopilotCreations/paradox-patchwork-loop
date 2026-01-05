@@ -129,7 +129,14 @@ class StoryGenerator:
     
     @classmethod
     def generate_intro(cls, location: str) -> str:
-        """Generate an introduction for a location."""
+        """Generate an introduction for a location.
+
+        Args:
+            location: The name of the location to introduce.
+
+        Returns:
+            A formatted introduction string for the location.
+        """
         template = random.choice(cls.TEMPLATES["intro"])
         location_desc = cls.TEMPLATES["location_descriptions"].get(
             location, f"a place called {location}"
@@ -175,7 +182,11 @@ class StoryGenerator:
     
     @classmethod
     def generate_loop_break(cls) -> str:
-        """Generate text for breaking a narrative loop."""
+        """Generate text for breaking a narrative loop.
+
+        Returns:
+            A narrative text string describing the loop break event.
+        """
         text = random.choice(cls.TEMPLATES["loop_break"])
         if random.random() < 0.3:
             text += f"\n\n{get_random_surreal_event()}"
@@ -272,7 +283,11 @@ class InfiniteStoryLoop:
         self._initialize_story()
     
     def _initialize_story(self) -> None:
-        """Set up the initial story state."""
+        """Set up the initial story state.
+
+        Creates the starting node with an intro text and initial choices,
+        adds it to the story graph, and logs the initialization.
+        """
         # Create the starting node
         intro_text = StoryGenerator.generate_intro("the beginning")
         
@@ -787,7 +802,11 @@ class InfiniteStoryLoop:
         }
     
     def _get_help_text(self) -> str:
-        """Get the help text for the game."""
+        """Get the help text for the game.
+
+        Returns:
+            A formatted string containing game commands and tips.
+        """
         return """
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                    INFINITE STORY LOOP - HELP                        ║
@@ -819,7 +838,11 @@ class InfiniteStoryLoop:
 """
     
     def _get_story_map(self) -> str:
-        """Get a visual representation of the story path."""
+        """Get a visual representation of the story path.
+
+        Returns:
+            A formatted string showing visited locations and game statistics.
+        """
         lines = [
             "╔══════════════════════════════════════════════════════════════════════╗",
             "║                         STORY MAP                                    ║",
@@ -843,19 +866,34 @@ class InfiniteStoryLoop:
         return "\n".join(lines)
     
     def get_current_text(self) -> str:
-        """Get the current node's text."""
+        """Get the current node's text.
+
+        Returns:
+            The formatted text of the current story node, or a default
+            message if the story has not begun.
+        """
         if self.current_node:
             return format_story_text(self.current_node.text)
         return "The story has not yet begun..."
     
     def get_current_choices(self) -> list[str]:
-        """Get the current available choices."""
+        """Get the current available choices.
+
+        Returns:
+            A list of choice text strings available to the player,
+            or an empty list if there is no current node.
+        """
         if self.current_node:
             return [c.text for c in self.current_node.get_available_choices(self.player)]
         return []
     
     def to_dict(self) -> dict:
-        """Convert game state to dictionary for saving."""
+        """Convert game state to dictionary for saving.
+
+        Returns:
+            A dictionary containing all game state data needed for
+            serialization and later restoration.
+        """
         return {
             "story_graph": self.story_graph.to_dict(),
             "current_node_id": self.current_node.id if self.current_node else None,
@@ -867,7 +905,14 @@ class InfiniteStoryLoop:
     
     @classmethod
     def from_dict(cls, data: dict) -> 'InfiniteStoryLoop':
-        """Create game instance from dictionary."""
+        """Create game instance from dictionary.
+
+        Args:
+            data: A dictionary containing serialized game state data.
+
+        Returns:
+            A new InfiniteStoryLoop instance restored from the saved data.
+        """
         from .player import Player
         
         game = cls.__new__(cls)

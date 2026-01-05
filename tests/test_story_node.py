@@ -14,7 +14,11 @@ class TestChoice:
     """Tests for the Choice class."""
     
     def test_choice_creation(self):
-        """Test creating a basic choice."""
+        """Test creating a basic choice.
+
+        Verifies that a Choice can be created with text and action,
+        and that optional fields default to appropriate values.
+        """
         choice = Choice(text="Go north", action="go north")
         assert choice.text == "Go north"
         assert choice.action == "go north"
@@ -22,7 +26,11 @@ class TestChoice:
         assert choice.consequences == {}
     
     def test_choice_with_target(self):
-        """Test creating a choice with a target node."""
+        """Test creating a choice with a target node.
+
+        Verifies that a Choice can be linked to a target node
+        via the target_node_id parameter.
+        """
         target_id = str(uuid.uuid4())
         choice = Choice(
             text="Enter the cave",
@@ -32,7 +40,11 @@ class TestChoice:
         assert choice.target_node_id == target_id
     
     def test_choice_with_consequences(self):
-        """Test creating a choice with consequences."""
+        """Test creating a choice with consequences.
+
+        Verifies that a Choice can store consequence data as a dictionary
+        that affects game state when the choice is selected.
+        """
         choice = Choice(
             text="Take the sword",
             action="take sword",
@@ -42,13 +54,21 @@ class TestChoice:
         assert choice.consequences["strength"] == 5
     
     def test_choice_is_available_no_condition(self):
-        """Test availability check with no condition."""
+        """Test availability check with no condition.
+
+        Verifies that a Choice without a condition function
+        is always available to any player.
+        """
         choice = Choice(text="Test", action="test")
         # Pass None as player since no condition
         assert choice.is_available(None) is True
     
     def test_choice_is_available_with_condition(self):
-        """Test availability check with a condition."""
+        """Test availability check with a condition.
+
+        Verifies that a Choice with a condition function correctly
+        evaluates player state to determine availability.
+        """
         from src.player import Player
         
         def has_key(player):
@@ -64,7 +84,11 @@ class TestChoice:
         assert choice.is_available(player_with_key) is True
     
     def test_choice_to_dict(self):
-        """Test serializing a choice to dictionary."""
+        """Test serializing a choice to dictionary.
+
+        Verifies that a Choice can be converted to a dictionary
+        representation suitable for JSON serialization.
+        """
         choice = Choice(
             text="Test choice",
             action="test",
@@ -79,7 +103,11 @@ class TestChoice:
         assert data["consequences"]["flag"] is True
     
     def test_choice_from_dict(self):
-        """Test deserializing a choice from dictionary."""
+        """Test deserializing a choice from dictionary.
+
+        Verifies that a Choice can be reconstructed from a dictionary
+        previously created via to_dict().
+        """
         data = {
             "text": "Walk forward",
             "action": "walk",
@@ -98,7 +126,11 @@ class TestStoryNode:
     """Tests for the StoryNode class."""
     
     def test_node_creation_defaults(self):
-        """Test creating a node with default values."""
+        """Test creating a node with default values.
+
+        Verifies that a StoryNode created without arguments has
+        appropriate default values for all fields.
+        """
         node = StoryNode()
         assert node.id is not None
         assert node.text == ""
@@ -108,7 +140,11 @@ class TestStoryNode:
         assert node.rewrite_count == 0
     
     def test_node_creation_with_values(self):
-        """Test creating a node with specific values."""
+        """Test creating a node with specific values.
+
+        Verifies that a StoryNode can be created with custom text,
+        node_type, and location parameters.
+        """
         node = StoryNode(
             text="You are in a dark room.",
             node_type=NodeType.CHOICE,
@@ -119,7 +155,11 @@ class TestStoryNode:
         assert node.location == "dark room"
     
     def test_add_choice(self):
-        """Test adding a choice to a node."""
+        """Test adding a choice to a node.
+
+        Verifies that a Choice can be added to a StoryNode's
+        choices list via the add_choice method.
+        """
         node = StoryNode(text="Test node")
         choice = Choice(text="Do something", action="do")
         
@@ -129,7 +169,11 @@ class TestStoryNode:
         assert node.choices[0].text == "Do something"
     
     def test_remove_choice(self):
-        """Test removing a choice from a node."""
+        """Test removing a choice from a node.
+
+        Verifies that a Choice can be removed from a StoryNode
+        by its action identifier.
+        """
         node = StoryNode()
         node.add_choice(Choice(text="Choice 1", action="c1"))
         node.add_choice(Choice(text="Choice 2", action="c2"))
@@ -141,7 +185,11 @@ class TestStoryNode:
         assert node.choices[0].action == "c2"
     
     def test_remove_choice_not_found(self):
-        """Test removing a non-existent choice."""
+        """Test removing a non-existent choice.
+
+        Verifies that attempting to remove a choice with an action
+        that doesn't exist returns False without modifying the node.
+        """
         node = StoryNode()
         node.add_choice(Choice(text="Choice", action="c1"))
         
@@ -151,7 +199,11 @@ class TestStoryNode:
         assert len(node.choices) == 1
     
     def test_get_choice_by_action(self):
-        """Test finding a choice by action."""
+        """Test finding a choice by action.
+
+        Verifies that a Choice can be retrieved from a StoryNode
+        using its action identifier string.
+        """
         node = StoryNode()
         node.add_choice(Choice(text="Go north", action="go north"))
         node.add_choice(Choice(text="Go south", action="go south"))
@@ -162,7 +214,11 @@ class TestStoryNode:
         assert choice.text == "Go north"
     
     def test_get_choice_by_action_not_found(self):
-        """Test finding a non-existent choice."""
+        """Test finding a non-existent choice.
+
+        Verifies that searching for a choice with an action that
+        doesn't exist returns None.
+        """
         node = StoryNode()
         node.add_choice(Choice(text="Go north", action="go north"))
         
@@ -171,7 +227,11 @@ class TestStoryNode:
         assert choice is None
     
     def test_get_choice_by_action_case_insensitive(self):
-        """Test that action search is case-insensitive."""
+        """Test that action search is case-insensitive.
+
+        Verifies that get_choice_by_action performs case-insensitive
+        matching on the action string.
+        """
         node = StoryNode()
         node.add_choice(Choice(text="Go North", action="Go North"))
         
@@ -180,7 +240,11 @@ class TestStoryNode:
         assert choice is not None
     
     def test_rewrite_node(self):
-        """Test rewriting a node's text."""
+        """Test rewriting a node's text.
+
+        Verifies that rewriting a node updates its text, preserves
+        the original, sets the is_rewritten flag, and records history.
+        """
         node = StoryNode(text="Original text")
         
         node.rewrite("New text", reason="paradox")
@@ -192,7 +256,11 @@ class TestStoryNode:
         assert len(node.metadata["rewrite_history"]) == 1
     
     def test_rewrite_node_multiple_times(self):
-        """Test rewriting a node multiple times."""
+        """Test rewriting a node multiple times.
+
+        Verifies that multiple rewrites increment the rewrite_count,
+        preserve the original text, and accumulate rewrite history.
+        """
         node = StoryNode(text="Original")
         
         node.rewrite("First rewrite", reason="loop")
@@ -204,7 +272,11 @@ class TestStoryNode:
         assert len(node.metadata["rewrite_history"]) == 2
     
     def test_clone_node(self):
-        """Test cloning a node."""
+        """Test cloning a node.
+
+        Verifies that cloning a node creates a new node with a
+        different ID but identical content and linked history.
+        """
         original = StoryNode(
             text="Original node",
             location="test location",
@@ -220,7 +292,11 @@ class TestStoryNode:
         assert original.id in clone.previous_node_ids
     
     def test_add_tag(self):
-        """Test adding tags to a node."""
+        """Test adding tags to a node.
+
+        Verifies that tags can be added to a node and that
+        tag matching is case-insensitive.
+        """
         node = StoryNode()
         
         node.add_tag("Important")
@@ -231,7 +307,11 @@ class TestStoryNode:
         assert not node.has_tag("other")
     
     def test_to_dict(self):
-        """Test serializing a node to dictionary."""
+        """Test serializing a node to dictionary.
+
+        Verifies that a StoryNode can be converted to a dictionary
+        representation suitable for JSON serialization.
+        """
         node = StoryNode(
             text="Test text",
             node_type=NodeType.PARADOX,
@@ -249,7 +329,11 @@ class TestStoryNode:
         assert "test_tag" in data["tags"]
     
     def test_from_dict(self):
-        """Test deserializing a node from dictionary."""
+        """Test deserializing a node from dictionary.
+
+        Verifies that a StoryNode can be reconstructed from a
+        dictionary previously created via to_dict().
+        """
         data = {
             "id": "test-id-123",
             "text": "Restored text",
@@ -273,7 +357,11 @@ class TestStoryNode:
         assert node.rewrite_count == 2
     
     def test_node_str_representation(self):
-        """Test string representation of a node."""
+        """Test string representation of a node.
+
+        Verifies that the __str__ method returns a readable
+        representation containing key node information.
+        """
         node = StoryNode(location="test", node_type=NodeType.CHOICE)
         
         str_repr = str(node)
@@ -282,7 +370,11 @@ class TestStoryNode:
         assert "test" in str_repr
     
     def test_get_available_choices(self):
-        """Test getting available choices for a player."""
+        """Test getting available choices for a player.
+
+        Verifies that get_available_choices filters choices based
+        on their condition functions and the player's current state.
+        """
         from src.player import Player
         
         node = StoryNode()
@@ -310,13 +402,21 @@ class TestStoryGraph:
     """Tests for the StoryGraph class."""
     
     def test_graph_creation(self):
-        """Test creating an empty graph."""
+        """Test creating an empty graph.
+
+        Verifies that a new StoryGraph starts empty with no
+        root node and zero length.
+        """
         graph = StoryGraph()
         assert len(graph) == 0
         assert graph.root_id is None
     
     def test_add_node(self):
-        """Test adding a node to the graph."""
+        """Test adding a node to the graph.
+
+        Verifies that adding a node increases the graph size and
+        sets the first node as the root.
+        """
         graph = StoryGraph()
         node = StoryNode(text="First node")
         
@@ -327,7 +427,11 @@ class TestStoryGraph:
         assert node.id in graph
     
     def test_add_multiple_nodes(self):
-        """Test adding multiple nodes."""
+        """Test adding multiple nodes.
+
+        Verifies that multiple nodes can be added and that the
+        first node remains the root.
+        """
         graph = StoryGraph()
         node1 = StoryNode(text="Node 1")
         node2 = StoryNode(text="Node 2")
@@ -339,7 +443,11 @@ class TestStoryGraph:
         assert graph.root_id == node1.id  # First node is root
     
     def test_get_node(self):
-        """Test retrieving a node by ID."""
+        """Test retrieving a node by ID.
+
+        Verifies that a node can be retrieved from the graph
+        using its unique identifier.
+        """
         graph = StoryGraph()
         node = StoryNode(text="Test node")
         graph.add_node(node)
@@ -350,7 +458,11 @@ class TestStoryGraph:
         assert retrieved.text == "Test node"
     
     def test_get_node_not_found(self):
-        """Test retrieving a non-existent node."""
+        """Test retrieving a non-existent node.
+
+        Verifies that attempting to retrieve a node with an ID
+        that doesn't exist returns None.
+        """
         graph = StoryGraph()
         
         retrieved = graph.get_node("nonexistent")
@@ -358,7 +470,11 @@ class TestStoryGraph:
         assert retrieved is None
     
     def test_remove_node(self):
-        """Test removing a node from the graph."""
+        """Test removing a node from the graph.
+
+        Verifies that a node can be removed from the graph
+        and is no longer accessible.
+        """
         graph = StoryGraph()
         node = StoryNode(text="To be removed")
         graph.add_node(node)
@@ -370,7 +486,11 @@ class TestStoryGraph:
         assert node.id not in graph
     
     def test_remove_node_not_found(self):
-        """Test removing a non-existent node."""
+        """Test removing a non-existent node.
+
+        Verifies that attempting to remove a node with an ID
+        that doesn't exist returns False.
+        """
         graph = StoryGraph()
         
         result = graph.remove_node("nonexistent")
@@ -378,7 +498,11 @@ class TestStoryGraph:
         assert result is False
     
     def test_get_nodes_by_location(self):
-        """Test finding nodes by location."""
+        """Test finding nodes by location.
+
+        Verifies that nodes can be filtered and retrieved
+        by their location attribute.
+        """
         graph = StoryGraph()
         graph.add_node(StoryNode(text="N1", location="forest"))
         graph.add_node(StoryNode(text="N2", location="cave"))
@@ -389,7 +513,11 @@ class TestStoryGraph:
         assert len(forest_nodes) == 2
     
     def test_get_nodes_by_tag(self):
-        """Test finding nodes by tag."""
+        """Test finding nodes by tag.
+
+        Verifies that nodes can be filtered and retrieved
+        by tags assigned to them.
+        """
         graph = StoryGraph()
         
         node1 = StoryNode(text="N1")
@@ -410,7 +538,11 @@ class TestStoryGraph:
         assert len(combat_nodes) == 2
     
     def test_find_path_simple(self):
-        """Test finding a path between two nodes."""
+        """Test finding a path between two nodes.
+
+        Verifies that a direct path between connected nodes
+        is correctly identified.
+        """
         graph = StoryGraph()
         
         node1 = StoryNode(text="Start")
@@ -428,7 +560,11 @@ class TestStoryGraph:
         assert path[1] == node2.id
     
     def test_find_path_same_node(self):
-        """Test finding path to same node."""
+        """Test finding path to same node.
+
+        Verifies that finding a path from a node to itself
+        returns a single-element path.
+        """
         graph = StoryGraph()
         node = StoryNode(text="Only node")
         graph.add_node(node)
@@ -438,7 +574,11 @@ class TestStoryGraph:
         assert path == [node.id]
     
     def test_find_path_no_connection(self):
-        """Test finding path when nodes aren't connected."""
+        """Test finding path when nodes aren't connected.
+
+        Verifies that attempting to find a path between
+        unconnected nodes returns None.
+        """
         graph = StoryGraph()
         node1 = StoryNode(text="Node 1")
         node2 = StoryNode(text="Node 2")
@@ -451,7 +591,11 @@ class TestStoryGraph:
         assert path is None
     
     def test_detect_cycles(self):
-        """Test detecting cycles in the graph."""
+        """Test detecting cycles in the graph.
+
+        Verifies that circular node connections are correctly
+        identified by the cycle detection algorithm.
+        """
         graph = StoryGraph()
         
         node1 = StoryNode(text="Node 1")
@@ -472,7 +616,11 @@ class TestStoryGraph:
         assert len(cycles) > 0
     
     def test_graph_to_dict(self):
-        """Test serializing a graph to dictionary."""
+        """Test serializing a graph to dictionary.
+
+        Verifies that a StoryGraph can be converted to a dictionary
+        representation suitable for JSON serialization.
+        """
         graph = StoryGraph()
         node1 = StoryNode(text="Node 1")
         node2 = StoryNode(text="Node 2")
@@ -487,7 +635,11 @@ class TestStoryGraph:
         assert len(data["nodes"]) == 2
     
     def test_graph_from_dict(self):
-        """Test deserializing a graph from dictionary."""
+        """Test deserializing a graph from dictionary.
+
+        Verifies that a StoryGraph can be reconstructed from a
+        dictionary previously created via to_dict().
+        """
         original = StoryGraph()
         original.add_node(StoryNode(text="Node 1", location="loc1"))
         original.add_node(StoryNode(text="Node 2", location="loc2"))
@@ -503,7 +655,11 @@ class TestNodeType:
     """Tests for the NodeType enum."""
     
     def test_node_types_exist(self):
-        """Test that all expected node types exist."""
+        """Test that all expected node types exist.
+
+        Verifies that all required NodeType enum values are
+        defined and accessible.
+        """
         assert NodeType.NARRATIVE is not None
         assert NodeType.CHOICE is not None
         assert NodeType.CONSEQUENCE is not None
@@ -512,6 +668,10 @@ class TestNodeType:
         assert NodeType.SURREAL is not None
     
     def test_node_type_names(self):
-        """Test node type name access."""
+        """Test node type name access.
+
+        Verifies that NodeType enum values have correct
+        string name representations.
+        """
         assert NodeType.NARRATIVE.name == "NARRATIVE"
         assert NodeType.PARADOX.name == "PARADOX"

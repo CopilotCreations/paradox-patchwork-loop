@@ -30,7 +30,11 @@ class PlayerState:
     choice_count: int
     
     def to_dict(self) -> dict:
-        """Convert state to dictionary."""
+        """Convert state to dictionary for serialization.
+        
+        Returns:
+            dict: Dictionary representation of the player state.
+        """
         return {
             "location": self.location,
             "inventory": self.inventory.copy(),
@@ -40,7 +44,14 @@ class PlayerState:
     
     @classmethod
     def from_dict(cls, data: dict) -> 'PlayerState':
-        """Create PlayerState from dictionary."""
+        """Create PlayerState from dictionary.
+        
+        Args:
+            data: Dictionary containing player state data.
+            
+        Returns:
+            PlayerState: A new PlayerState instance.
+        """
         return cls(
             location=data.get("location", "unknown"),
             inventory=data.get("inventory", []),
@@ -209,12 +220,20 @@ class Player:
     variables: dict[str, any] = field(default_factory=dict)
     
     def __post_init__(self):
-        """Initialize player state after dataclass init."""
+        """Initialize player state after dataclass init.
+        
+        Adds the current location to visited locations and saves
+        the initial state to history.
+        """
         self.visited_locations.add(self.current_location)
         self._save_state()
     
     def _save_state(self) -> None:
-        """Save current state to history."""
+        """Save current state to history.
+        
+        Creates a PlayerState snapshot of the current player state
+        and appends it to the state history.
+        """
         state = PlayerState(
             location=self.current_location,
             inventory=self.inventory.copy(),
@@ -413,7 +432,11 @@ class Player:
         return None
     
     def to_dict(self) -> dict:
-        """Convert player to dictionary for serialization."""
+        """Convert player to dictionary for serialization.
+        
+        Returns:
+            dict: Dictionary representation of the player.
+        """
         return {
             "name": self.name,
             "inventory": self.inventory.copy(),
@@ -428,7 +451,14 @@ class Player:
     
     @classmethod
     def from_dict(cls, data: dict) -> 'Player':
-        """Create Player from dictionary."""
+        """Create Player from dictionary.
+        
+        Args:
+            data: Dictionary containing player data.
+            
+        Returns:
+            Player: A new Player instance with restored state.
+        """
         player = cls(
             name=data.get("name", "Traveler"),
             inventory=data.get("inventory", []),
@@ -446,5 +476,9 @@ class Player:
         return player
     
     def __str__(self) -> str:
-        """Return string representation."""
+        """Return string representation.
+        
+        Returns:
+            str: Human-readable string describing the player.
+        """
         return f"Player({self.name}, location={self.current_location}, items={len(self.inventory)})"
